@@ -1,18 +1,21 @@
 const SDK = {
-  serverURL: "http://dis-bookstore.herokuapp.com/api",
+  serverURL: "http://localhost:8080/api",
   request: (options, cb) => {
 
-    let headers = {};
+    /*let headers = {};
     if (options.headers) {
       Object.keys(options.headers).forEach((h) => {
         headers[h] = (typeof options.headers[h] === 'object') ? JSON.stringify(options.headers[h]) : options.headers[h];
       });
+    }*/
+    let token = {
+      "authorization":localStorage.getItem("token")
     }
 
     $.ajax({
       url: SDK.serverURL + options.url,
       method: options.method,
-      headers: headers,
+      headers: token,
       contentType: "application/json",
       dataType: "json",
       data: JSON.stringify(options.data),
@@ -100,12 +103,11 @@ const SDK = {
       SDK.request({method: "GET", url: "/staffs"}, cb);
     },
     current: () => {
-      return SDK.Storage.load("user");
+      //return SDK.Storage.load("token");
+        return localStorage.getItem("token");
     },
     logOut: () => {
-      SDK.Storage.remove("tokenId");
-      SDK.Storage.remove("userId");
-      SDK.Storage.remove("user");
+      localStorage.removeItem("token"); //Sletter token når jeg logger ud
       window.location.href = "index.html";
     },
     login: (email, password, cb) => {
@@ -114,16 +116,38 @@ const SDK = {
           email: email,
           password: password
         },
-        url: "/users/login?include=user",
+        url: "/login",
         method: "POST"
       }, (err, data) => {
 
         //On login-error
         if (err) return cb(err);
 
-        SDK.Storage.persist("tokenId", data.id);
-        SDK.Storage.persist("userId", data.userId);
-        SDK.Storage.persist("user", data.user);
+     //   SDK.Storage.persist("crypted", data);
+        localStorage.setItem("token", data);
+       // SDK.Storage.persist("userId", data.userId);
+       // SDK.Storage.persist("user", data.user);
+
+
+        cb(null, data);
+
+      });
+    },
+    createUser: (firstName, lastName, email, password, verifyPassword, cb) => {
+      SDK.request({
+          data: {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+              verifyPassword: verifyPassword
+          },
+          url: "/register",
+          method: "POST"
+      }, (err, data) => {
+
+        //On create error?
+        if (err) return cb(err);
 
         cb(null, data);
 
