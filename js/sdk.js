@@ -2,12 +2,15 @@ const SDK = {
   serverURL: "http://localhost:8080/api",
   request: (options, cb) => {
 
-    /*let headers = {};
+    /*
+    let headers = {};
     if (options.headers) {
       Object.keys(options.headers).forEach((h) => {
         headers[h] = (typeof options.headers[h] === 'object') ? JSON.stringify(options.headers[h]) : options.headers[h];
       });
-    }*/
+    }
+    */
+
     let token = {
       "authorization":localStorage.getItem("token")
     }
@@ -104,7 +107,8 @@ const SDK = {
     },
     current: () => {
       //return SDK.Storage.load("token");
-        return localStorage.getItem("token");
+        return localStorage.getItem("token")
+
     },
     logOut: () => {
       localStorage.removeItem("token"); //Sletter token når jeg logger ud
@@ -158,7 +162,7 @@ const SDK = {
         const currentUser = SDK.User.current();
         if (currentUser) {
           $(".navbar-right").html(`
-            <li><a href="my-page.html">Your orders</a></li>
+            <li><a href="index.html">Your profile</a></li>
             <li><a href="#" id="logout-link">Logout</a></li>
           `);
         } else {
