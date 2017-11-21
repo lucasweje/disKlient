@@ -2,18 +2,17 @@ const SDK = {
   serverURL: "http://localhost:8080/api",
   request: (options, cb) => {
 
-    /*
-    let headers = {};
+
+    /*let headers = {};
     if (options.headers) {
       Object.keys(options.headers).forEach((h) => {
         headers[h] = (typeof options.headers[h] === 'object') ? JSON.stringify(options.headers[h]) : options.headers[h];
       });
-    }
-    */
+    }*/
 
     let token = {
-      "authorization":localStorage.getItem("token")
-    }
+      "Authorization":localStorage.getItem("token")
+    };
 
     $.ajax({
       url: SDK.serverURL + options.url,
@@ -31,53 +30,40 @@ const SDK = {
     });
 
   },
-  Book: {
-    addToBasket: (book) => {
-      let basket = SDK.Storage.load("basket");
-
-      //Has anything been added to the basket before?
-      if (!basket) {
-        return SDK.Storage.persist("basket", [{
-          count: 1,
-          book: book
-        }]);
-      }
-
-      //Does the book already exist?
-      let foundBook = basket.find(b => b.book.id === book.id);
-      if (foundBook) {
-        let i = basket.indexOf(foundBook);
-        basket[i].count++;
-      } else {
-        basket.push({
-          count: 1,
-          book: book
-        });
-      }
-
-      SDK.Storage.persist("basket", basket);
-    },
-    findAll: (cb) => {
+  Event: {
+    findAll: (cb, events) => {
       SDK.request({
         method: "GET",
-        url: "/books",
-        headers: {
-          filter: {
-            include: ["authors"]
+        url: "/events",
+          headers: {
+            filter: {
+                include:["events"]
+            }
           }
-        }
       }, cb);
     },
-    create: (data, cb) => {
-      SDK.request({
-        method: "POST",
-        url: "/books",
-        data: data,
-        headers: {authorization: SDK.Storage.load("tokenId")}
-      }, cb);
-    }
+      createEvent: (eventName, price, location, description, eventDate, cb) => {
+          SDK.request({
+              data: {
+                  eventName: eventName,
+                  price: price,
+                  location: location,
+                  description: description,
+                  eventDate: eventDate,
+              },
+              url: "/events",
+              method: "POST"
+          }, (err, data) => {
+
+              if (err) return cb(err);
+
+              cb(null, data);
+
+          });
+      },
+
   },
-  Author: {
+    Author: {
     findAll: (cb) => {
       SDK.request({method: "GET", url: "/authors"}, cb);
     }
@@ -105,13 +91,31 @@ const SDK = {
     findAll: (cb) => {
       SDK.request({method: "GET", url: "/staffs"}, cb);
     },
-    current: () => {
-      //return SDK.Storage.load("token");
-        return localStorage.getItem("token")
+    current: (cb) => {
+          //return SDK.Storage.load("user")
+//        return localStorage.getItem("token")
 
+        // request til /api/profile i StudentEndpoint får at vi student på kun token???
+
+        SDK.request({
+            url: "/students/profile",
+            method: "GET"
+        }, (err, data) => {
+
+            if (err) return cb(err);
+
+            cb(null, data);
+        });
+
+
+// {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJVc2VyIjoibHVjQHdlamUuZGsiLCJpc3MiOiJTVEZVIiwiZXhwIjoxNTExMTI0ODc2ODIwfQ.6GP8YoGE1Pm_ZrNyBu7pe_SYcfbknviCrl0Mjo_P5eD7C4BZJOd_zeyWdNFMdbY0eSJcoOglWlWhrj2NsUIyjA"}
+//           eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJVc2VyIjoibHVjQHdlamUuZGsiLCJpc3MiOiJTVEZVIiwiZXhwIjoxNTExMDg3NjQ5NzcyfQ.iFTfENmlJZZUqMxquzMyCOGKNi76ypNhQQnOgtOMVmnIy3kh2XRq8BrBRV3NmU9JgQDJkLeBcufAfWvNQWl0KQ
     },
     logOut: () => {
-      localStorage.removeItem("token"); //Sletter token når jeg logger ud
+      //localStorage.removeItem("token"); //Sletter token når jeg logger ud
+      SDK.Storage.remove("token");
+      SDK.Storage.remove("idStudent");
+      SDK.Storage.remove("user");
       window.location.href = "index.html";
     },
     login: (email, password, cb) => {
@@ -127,11 +131,8 @@ const SDK = {
         //On login-error
         if (err) return cb(err);
 
-     //   SDK.Storage.persist("crypted", data);
+       // console.log(data);
         localStorage.setItem("token", data);
-       // SDK.Storage.persist("userId", data.userId);
-       // SDK.Storage.persist("user", data.user);
-
 
         cb(null, data);
 
@@ -159,24 +160,29 @@ const SDK = {
     },
     loadNav: (cb) => {
       $("#nav-container").load("nav.html", () => {
-        const currentUser = SDK.User.current();
-        if (currentUser) {
-          $(".navbar-right").html(`
-            <li><a href="index.html">Your profile</a></li>
+        var currentUser = null;
+        SDK.User.current((err, res) => {
+          currentUser = res;
+
+          if (currentUser) {
+                $(".navbar-right").html(`
+            <li><a href="my-page.html">Your profile</a></li>
             <li><a href="#" id="logout-link">Logout</a></li>
           `);
-        } else {
-          $(".navbar-right").html(`
+            } else {
+                $(".navbar-right").html(`
             <li><a href="login.html">Log-in <span class="sr-only">(current)</span></a></li>
           `);
-        }
-        $("#logout-link").click(() => SDK.User.logOut());
+            }
+            $("#logout-link").click(() => SDK.User.logOut());
+        });
+
         cb && cb();
       });
     }
   },
   Storage: {
-    prefix: "BookStoreSDK",
+    prefix: "",
     persist: (key, value) => {
       window.localStorage.setItem(SDK.Storage.prefix + key, (typeof value === 'object') ? JSON.stringify(value) : value)
     },

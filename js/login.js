@@ -33,7 +33,7 @@ $(document).ready(() => {
             $(".form-group").addClass("has-error");
             console.log("FEIL")
         } else {
-            window.location.href = "index.html";
+            window.location.href = "my-page.html";
         }
     });
 
