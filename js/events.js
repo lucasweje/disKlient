@@ -4,17 +4,12 @@ $(document).ready(() => {
     //const currentUser = SDK.User.current();
     const $eventList = $("#event-list");
 
-    /*$(".page-header").html(`
-      <h1>Hi, ${currentUser.firstName} ${currentUser.lastName}</h1>
-    `);*/
-
 
     SDK.Event.findAll((cb, events) => {
         events = JSON.parse(events);
         events.forEach((event) => {
-            const eventHtml = `             
+            const eventHtml = `           
                    
-                            
                                        <div class="col-md-4">
                                          <div class="jumbotron">
                                           <h2><u>${event.eventName}</u></h2>
@@ -23,31 +18,74 @@ $(document).ready(() => {
                                           <p><b>Location:</b> ${event.location}</p>
                                           <p><b>Description:</b> ${event.description}</p>
                                           
-                                          <button class="btn-lg" id="join-event-button">Join event</button>
+                                          <button class="btn-sm btn-primary joinEventButton" data-event-id="${event.idEvent}">Join event</button>
+                                          <button class="btn-sm btn-primary seeAttendingStudents" data-event-id2="${event.idEvent}">See who is participating</button>
                                         </div>
                                     </div>
-
-                            
                
                     `;
 
             $eventList.append(eventHtml)
 
+
+
+
         });
 
-        $(".attend-button").click(function(){
+        $(".joinEventButton").click(function() {
 
-            const eventId = $(this).data("event-id");
-            const event = events.find((event) => event.id === eventId);
-            window.alert(eventId);
-            SDK.Event.addToAttendingEvents(event);
+            const idEvent = $(this).data("event-id");
+            const event = events.find((event) => event.idEvent === idEvent);
 
+            console.log(event);
+
+            SDK.Event.joinEvent(idEvent, event.eventName, event.location, event.price, event.eventDate, event.description, (err, data) => {
+                if (err && err.xhr.status === 401) {
+                    $(".form-group").addClass("has-error")
+                }
+                else if (err){
+                    console.log("An error happened")
+                    window.alert("There was en error joining the event");
+                } else {
+                    window.location.href = "events.html";
+                }
+            });
+
+
+        });
+
+        //Måske ryk ud af findAll metoden
+        $(".seeAttendingStudents").click(function(){
+
+            var idEvent = $(this).data("event-id2");
+
+            console.log();
+
+            SDK.Event.getAttendingStudents(idEvent, (cb, students) => {
+                if(students){
+                    students = JSON.parse(students);
+                    students.forEach((student) => {
+                        console.log(student.firstName);
+                    });
+                } else {
+                    console.log("No one is attending this event :(");
+
+                }
+
+
+
+            });
 
 
         });
 
     });
 
+
+
+
+
+    // Maybe not needed
     $("#attend-modal").on("shown.es.modal", () => {
         const mineEvents = SDK.Storage.load("mineEvents");
         const $modalTbody = $("#modal-tvody");

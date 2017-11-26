@@ -12,7 +12,8 @@ $(document).ready(() => {
         $(".form-group").addClass("has-error");
       }
       else if (err){
-        console.log("BAD stuff happened")
+        console.log("BAD stuff happened");
+        window.alert("Login failed");
       } else {
         window.location.href = "index.html";
       }
@@ -32,8 +33,9 @@ $(document).ready(() => {
         if (err && err.xhr.status !== 200) {
             $(".form-group").addClass("has-error");
             console.log("FEIL")
+            window.alert("There was en error creating user");
         } else {
-            window.location.href = "my-page.html";
+            window.location.href = "index.html";
         }
     });
 

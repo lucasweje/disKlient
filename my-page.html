@@ -16,13 +16,54 @@
     <div class="row" id="nav-container"></div>
 
     <div class="row">
-        <div class="col-lg-12">
-            <div class="jumbotron jumbotron-fluid">
-                <div class="page-header"></div>
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <div class="jumbotron jumbotron-fluid">
+                    <h4>Profile:</h4>
+                    <div class="profile-info"></div>
+                </div>
             </div>
-            <div class="jumbotron jumbotron-fluid">
-                <div class="profile-info"></div>
+            <div class="col-md-9">
+                <div class="jumbotron">
+                    <!-- Events you created yourself -->
+                    <div>
+                        <h3>Events you created:</h3>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Owner</th>
+                                <th>Event name</th>
+                                <th>Price</th>
+                                <th>Location</th>
+                                <th>Event date</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody id="ownEventsTable"></tbody>
+                        </table>
+                    </div>
+                    <!-- Events you have joined -->
+                    <div>
+                        <h3>Events you joined:</h3>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Owner</th>
+                                <th>Event name</th>
+                                <th>Price</th>
+                                <th>Location</th>
+                                <th>Event date</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody id="joinedEventsTable"></tbody>
+                        </table>
+                    </div>
+
+
+                </div>
             </div>
+
         </div>
     </div>
 

@@ -1,20 +1,18 @@
 $(document).ready(() => {
 
 
-    const $basketTbody = $("#basket-tbody");
   SDK.User.loadNav();
+  const $ownEventsTable = $("#ownEventsTable");
+  const $joinedEventsTable = $("#joinedEventsTable");
 
 
   SDK.User.current((error, res) => {
 
     var currentStudent = JSON.parse(res);
 
-    $(".page-header").html(`
-             <h1>Hi, ${currentStudent.firstName} <br> Your ID is: ${currentStudent.idStudent}</h1>
-     `);
 
     $(".profile-info").html(`
-          <dl>
+          <dl>        
             <dt>Name</dt>
             <dd>${currentStudent.firstName} ${currentStudent.lastName}</dd>
             <dt>Email</dt>
@@ -23,6 +21,53 @@ $(document).ready(() => {
             <dd>${currentStudent.idStudent}</dd>
           </dl>
      `);
+
+      SDK.Event.findAll((cb, events) => {
+          events = JSON.parse(events);
+          events.forEach((event) => {
+              if (currentStudent.idStudent === event.owner) {
+                  let eventHtml = `
+                    <tr>
+                        <td>${event.owner}</td>
+                        <td>${event.eventName}</td>
+                        <td>${event.price}</td>
+                        <td>${event.location}</td>                 
+                        <td>${event.eventDate}</td>
+                        <td>${event.description}</td>
+                        
+                        <td><button class="btn-sm btn-danger">Delete</button></td>
+                    </tr>
+                    `;
+                  $ownEventsTable.append(eventHtml);
+              }
+
+          });
+      });
+
+      SDK.User.getAttendingEvents((cb, events) =>{
+          events = JSON.parse(events);
+          events.forEach((event) => {
+
+                  let eventHtml = `
+                    <tr>
+                        <td>${event.owner}</td>
+                        <td>${event.eventName}</td>
+                        <td>${event.price}</td>
+                        <td>${event.location}</td>                 
+                        <td>${event.eventDate}</td>
+                        <td>${event.description}</td>
+                        
+                        <td><button class="btn-sm btn-danger">Delete</button></td>
+                    </tr>
+                    `;
+                  $joinedEventsTable.append(eventHtml);
+
+
+          });
+      });
+
+
+
   });
 
 });

@@ -31,18 +31,19 @@ const SDK = {
 
   },
   Event: {
-    findAll: (cb, events) => {
-      SDK.request({
-        method: "GET",
-        url: "/events",
-          headers: {
-            filter: {
-                include:["events"]
+      findAll: (cb, events) => {
+        SDK.request({
+            method: "GET",
+            url: "/events",
+            headers: {
+                filter: {
+                    include:["events"]
+                }
             }
-          }
-      }, cb);
-    },
-      createEvent: (eventName, price, location, description, eventDate, cb) => {
+        }, cb);
+      },
+
+      createEvent: (eventName, location, price, eventDate, description, cb) => {
           SDK.request({
               data: {
                   eventName: eventName,
@@ -62,12 +63,35 @@ const SDK = {
           });
       },
 
+      joinEvent: (idEvent, eventName, location, price, eventDate, description, cb) => {
+          SDK.request({
+              data: {
+                  idEvent: idEvent,
+                  eventName: eventName,
+                  price: price,
+                  location: location,
+                  description: description,
+                  eventDate: eventDate,
+              },
+              url: "/events/join",
+              method: "POST"
+          }, (err, data) => {
+
+              if (err) return cb(err);
+
+              cb(null, data);
+
+          });
+      },
+
+      getAttendingStudents: (idEvent, cb) => {
+          SDK.request({
+              method: "GET",
+              url: "/events/" + idEvent + "/students"
+          }, cb);
+      }
   },
-    Author: {
-    findAll: (cb) => {
-      SDK.request({method: "GET", url: "/authors"}, cb);
-    }
-  },
+
   Order: {
     create: (data, cb) => {
       SDK.request({
@@ -89,14 +113,21 @@ const SDK = {
   },
   User: {
     findAll: (cb) => {
-      SDK.request({method: "GET", url: "/staffs"}, cb);
+      SDK.request({
+          method: "GET",
+          url: "/staffs"
+      }, cb);
+    },
+
+    getAttendingEvents: (cb, events) => {
+        SDK.request({
+            method: "GET",
+            url: "/students/" + localStorage.getItem("idStudent") + "/events"
+        }, cb);
     },
     current: (cb) => {
-          //return SDK.Storage.load("user")
-//        return localStorage.getItem("token")
 
-        // request til /api/profile i StudentEndpoint får at vi student på kun token???
-
+        // request til /api/profile i StudentEndpoint får at vi data om student fra token
         SDK.request({
             url: "/students/profile",
             method: "GET"
@@ -104,13 +135,15 @@ const SDK = {
 
             if (err) return cb(err);
 
+            //saves the currentStudents ID for later use
+            localStorage.setItem("idStudent", JSON.parse(data).idStudent);
+
             cb(null, data);
         });
 
 
-// {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJVc2VyIjoibHVjQHdlamUuZGsiLCJpc3MiOiJTVEZVIiwiZXhwIjoxNTExMTI0ODc2ODIwfQ.6GP8YoGE1Pm_ZrNyBu7pe_SYcfbknviCrl0Mjo_P5eD7C4BZJOd_zeyWdNFMdbY0eSJcoOglWlWhrj2NsUIyjA"}
-//           eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJVc2VyIjoibHVjQHdlamUuZGsiLCJpc3MiOiJTVEZVIiwiZXhwIjoxNTExMDg3NjQ5NzcyfQ.iFTfENmlJZZUqMxquzMyCOGKNi76ypNhQQnOgtOMVmnIy3kh2XRq8BrBRV3NmU9JgQDJkLeBcufAfWvNQWl0KQ
-    },
+   },
+
     logOut: () => {
       //localStorage.removeItem("token"); //Sletter token når jeg logger ud
       SDK.Storage.remove("token");
@@ -118,6 +151,7 @@ const SDK = {
       SDK.Storage.remove("user");
       window.location.href = "index.html";
     },
+
     login: (email, password, cb) => {
       SDK.request({
         data: {
@@ -131,13 +165,14 @@ const SDK = {
         //On login-error
         if (err) return cb(err);
 
-       // console.log(data);
         localStorage.setItem("token", data);
+
 
         cb(null, data);
 
       });
     },
+
     createUser: (firstName, lastName, email, password, verifyPassword, cb) => {
       SDK.request({
           data: {
@@ -158,6 +193,7 @@ const SDK = {
 
       });
     },
+
     loadNav: (cb) => {
       $("#nav-container").load("nav.html", () => {
         var currentUser = null;
