@@ -102,12 +102,12 @@ const SDK = {
         deleteEvent: (idEvent, eventName, location, price, eventDate, description, cb) => {
             SDK.request({
                 data: {
-                  idEvent: idEvent,
-                  eventName: eventName,
-                  location: location,
-                  price: price,
-                  eventDate: eventDate,
-                  description: description,
+                    idEvent: idEvent,
+                    eventName: eventName,
+                    location: location,
+                    price: price,
+                    eventDate: eventDate,
+                    description: description,
                 },
                 method: "PUT",
                 url: "/events/" + idEvent + "/delete-event"
@@ -177,12 +177,13 @@ const SDK = {
         logOut: (cb) => {
             SDK.request({
                 method: "POST",
-                url: "/students/logout"
-            }, cb);
-
-                localStorage.removeItem("token");
-                localStorage.removeItem("idStudent");
-                window.location.href = "login.html";
+                url: "/students/logout",
+            }, (err, data) => {
+                if (err) {
+                    return cb(err);
+                }
+                cb(null, data);
+            });
 
         },
 
@@ -236,15 +237,25 @@ const SDK = {
 
                     if (currentUser) {
                         $(".navbar-right").html(`
-            <li><a href="my-page.html">Your profile</a></li>
-            <li><a href="#" id="logout-link">Logout</a></li>
-          `);
+                                 <li><a href="my-page.html">Your profile</a></li>
+                                 <li><a href="#" id="logout-link">Logout</a></li>
+                             `);
                     } else {
                         $(".navbar-right").html(`
-            <li><a href="login.html">Log-in <span class="sr-only">(current)</span></a></li>
-          `);
+                             <li><a href="login.html">Log-in <span class="sr-only">(current)</span></a></li>
+                              `);
                     }
-                    $("#logout-link").click(() => SDK.User.logOut());
+                    $("#logout-link").click(() => {
+                        SDK.User.logOut((err, data) => {
+                            if (err && err.xhr.status === 401) {
+                                $(".form-group").addClass("has-error");
+                            } else {
+                                localStorage.removeItem("token");
+                                localStorage.removeItem("idStudent");
+                                window.location.href = "login.html";
+                            }
+                        });
+                    });
                 });
 
                 cb && cb();
