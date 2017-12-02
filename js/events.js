@@ -1,15 +1,17 @@
 $(document).ready(() => {
 
     SDK.User.loadNav();
-    //const currentUser = SDK.User.current();
     const $eventList = $("#event-list");
     const $seeAttendingStudents = $("#seeAttendingStudents");
 
 
     SDK.Event.findAll((cb, events) => {
-        events = JSON.parse(events);
-        events.forEach((event) => {
-            const eventHtml = `           
+        //If statement checks if there is a token (a log in has been succesful)
+        //Displays events if yes
+        if (localStorage.getItem("token")) {
+            events = JSON.parse(events);
+            events.forEach((event) => {
+                const eventHtml = `           
                    
                                        <div class="col-md-4">
                                          <div class="jumbotron">
@@ -29,26 +31,36 @@ $(document).ready(() => {
                
                     `;
 
-            $eventList.append(eventHtml)
+                $eventList.append(eventHtml)
 
 
+            });
+        }
+        else {
+            $eventList.html(`
+                    <div class="col-md-12">
+                        <div class="jumbotron">
+                            <h1 align="center"> Log in to see events</h1>
+                        </div>
+                    </div>
+                    `);
+        }
 
 
-        });
+        $(".joinEventButton").click(function () {
 
-        $(".joinEventButton").click(function() {
-
+            // Takes the specific data that the buttons which if refers to provides
             const idEvent = $(this).data("event-id-join");
+            // Does a find method on the array 'events' that comes from the findAll method in sdk.js
+            // finds the event with the matching idEvent
             const event = events.find((event) => event.idEvent === idEvent);
 
-            console.log(idEvent);
-            console.log(event);
-
+            //
             SDK.Event.joinEvent(idEvent, event.eventName, event.location, event.price, event.eventDate, event.description, (err, data) => {
                 if (err && err.xhr.status === 401) {
                     $(".form-group").addClass("has-error")
                 }
-                else if (err){
+                else if (err) {
                     console.log("An error happened")
                     window.alert("There was en error joining the event");
                 } else {
@@ -60,14 +72,14 @@ $(document).ready(() => {
         });
 
         //Måske ryk ud af findAll metoden
-        $(".seeAttendingStudents").click(function(){
+        $(".seeAttendingStudents").click(function () {
 
             var idEvent = $(this).data("event-id-see");
 
             console.log(idEvent);
 
             SDK.Event.getAttendingStudents(idEvent, (cb, students) => {
-                if(students){
+                if (students) {
                     students = JSON.parse(students);
                     students.forEach((student) => {
                         console.log(student.firstName);
@@ -85,7 +97,6 @@ $(document).ready(() => {
                 }
 
 
-
             });
 
 
@@ -96,9 +107,6 @@ $(document).ready(() => {
     $("#clearModalText").click(function () {
         $("#seeAttendingStudents").html("");
     });
-
-
-
 
 
     // Maybe not needed
