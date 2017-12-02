@@ -237,7 +237,7 @@ const SDK = {
 
                     if (currentUser) {
                         $(".navbar-right").html(`
-                                 <li><a href="my-page.html">Your profile</a></li>
+                                 <li><a href="profile.html">Your profile</a></li>
                                  <li><a href="#" id="logout-link">Logout</a></li>
                              `);
                     } else {
