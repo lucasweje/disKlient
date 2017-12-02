@@ -67,7 +67,7 @@ $(document).ready(() => {
                           console.log("An error happened")
                           window.alert("There was en error editing the event");
                       } else {
-                          window.location.href = "my-page.html";
+                          window.location.href = "../profile.html";
                       }
                   })
 
@@ -91,9 +91,10 @@ $(document).ready(() => {
                       console.log("An error happened")
                       window.alert("There was en error deleting  the event");
                   } else {
-                      window.location.href = "my-page.html";
+                      window.location.href = "../profile.html";
                   }
               })
+
 
           });
 
