@@ -2,7 +2,17 @@ $(document).ready(() => {
 
     SDK.User.loadNav();
 
+    $("#createEventModalButton").click(() => {
+
+        if(localStorage.getItem("token")){
+
+        } else{
+            window.alert("You need to be logged in to create a new event.");
+        }
+    });
+
     $("#eventCreateButton").click(() => {
+
 
         const eventName = $("#inputEventName").val();
         const location = $("#inputLocation").val();

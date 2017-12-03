@@ -1,17 +1,17 @@
 $(document).ready(() => {
 
 
-  SDK.User.loadNav();
-  const $ownEventsTable = $("#ownEventsTable");
-  const $joinedEventsTable = $("#joinedEventsTable");
+    SDK.User.loadNav();
+    const $ownEventsTable = $("#ownEventsTable");
+    const $joinedEventsTable = $("#joinedEventsTable");
 
 
-  SDK.User.current((error, res) => {
+    SDK.User.current((error, res) => {
 
-    var currentStudent = JSON.parse(res);
+        var currentStudent = JSON.parse(res);
 
 
-    $(".profile-info").html(`
+        $(".profile-info").html(`
           <dl>        
             <dt>Name</dt>
             <dd>${currentStudent.firstName} ${currentStudent.lastName}</dd>
@@ -22,11 +22,11 @@ $(document).ready(() => {
           </dl>
      `);
 
-      SDK.Event.findAll((cb, events) => {
-          events = JSON.parse(events);
-          events.forEach((event) => {
-              if (currentStudent.idStudent === event.owner) {
-                  let eventHtml = `
+        SDK.Event.findAll((cb, events) => {
+            events = JSON.parse(events);
+            events.forEach((event) => {
+                if (currentStudent.idStudent === event.owner) {
+                    let eventHtml = `
                     <tr>
                         <td>${event.owner}</td>
                         <td>${event.eventName}</td>
@@ -39,72 +39,66 @@ $(document).ready(() => {
                         <td><button class="btn-sm btn-danger deleteEventButton" data-event-id-delete="${event.idEvent}">Delete</button></td>
                     </tr>
                     `;
-                  $ownEventsTable.append(eventHtml);
-              }
+                    $ownEventsTable.append(eventHtml);
+                }
 
-          });
+            });
 
-          $(".editEventButton").click(function () {
+            $(".editEventButton").click(function () {
 
-              const idEvent = $(this).data("event-id-edit");
+                const idEvent = $(this).data("event-id-edit");
 
-              console.log(idEvent);
+                $("#eventEditSubmitButton").click(() => {
+                    const eventName = $("#inputEventName").val();
+                    const location = $("#inputLocation").val();
+                    const price = $("#inputPrice").val();
+                    const eventDate = $("#inputEventDate").val();
+                    const description = $("#inputDescription").val();
 
-              $("#eventEditSubmitButton").click(() => {
-                  const eventName = $("#inputEventName").val();
-                  const location = $("#inputLocation").val();
-                  const price = $("#inputPrice").val();
-                  const eventDate = $("#inputEventDate").val();
-                  const description = $("#inputDescription").val();
+                    SDK.Event.updateEvent(idEvent, eventName, location, price, eventDate, description, (err, data) => {
+                        if (err && err.xhr.status === 401) {
+                            $(".form-group").addClass("has-error")
+                        }
+                        else if (err) {
+                            console.log("An error happened")
+                            window.alert("There was en error editing the event");
+                        } else {
+                            window.location.href = "profile.html";
+                        }
+                    })
 
-                  console.log(eventName);
-
-                  SDK.Event.updateEvent(idEvent, eventName, location, price, eventDate, description, (err, data) => {
-                      if (err && err.xhr.status === 401) {
-                          $(".form-group").addClass("has-error")
-                      }
-                      else if (err){
-                          console.log("An error happened")
-                          window.alert("There was en error editing the event");
-                      } else {
-                          window.location.href = "../profile.html";
-                      }
-                  })
-
-              });
+                });
 
 
+            });
+
+            $(".deleteEventButton").click(function () {
+
+                const idEvent = $(this).data("event-id-delete");
+                const event = events.find((event) => event.idEvent === idEvent);
+
+                SDK.Event.deleteEvent(idEvent, event.eventName, event.location, event.price, event.eventDate, event.description, (err, data) => {
+                    if (err && err.xhr.status === 401) {
+                        $(".form-group").addClass("has-error")
+                    }
+                    else if (err) {
+                        console.log("An error happened")
+                        window.alert("There was en error deleting  the event");
+                    } else {
+                        window.location.href = "profile.html";
+                    }
+                })
 
 
-          });
+            });
 
-          $(".deleteEventButton").click(function () {
+        });
 
-              const idEvent = $(this).data("event-id-delete");
-              const event = events.find((event) => event.idEvent === idEvent);
+        SDK.User.getAttendingEvents((cb, events) => {
+            events = JSON.parse(events);
+            events.forEach((event) => {
 
-              SDK.Event.deleteEvent(idEvent, event.eventName, event.location, event.price, event.eventDate, event.description, (err, data) => {
-                  if (err && err.xhr.status === 401) {
-                      $(".form-group").addClass("has-error")
-                  }
-                  else if (err){
-                      console.log("An error happened")
-                      window.alert("There was en error deleting  the event");
-                  } else {
-                      window.location.href = "../profile.html";
-                  }
-              })
-
-
-          });
-
-      });
-
-      SDK.User.getAttendingEvents((cb, events) =>{
-          events = JSON.parse(events);
-          events.forEach((event) => {
-
-                  let eventHtml = `
+                let eventHtml = `
                     <tr>
                         <td>${event.owner}</td>
                         <td>${event.eventName}</td>
@@ -115,18 +109,14 @@ $(document).ready(() => {
                         
                     </tr>
                     `;
-                  $joinedEventsTable.append(eventHtml);
+                $joinedEventsTable.append(eventHtml);
 
 
-          });
-      });
+            });
+        });
 
 
-
-
-  });
-
-
+    });
 
 
 });
