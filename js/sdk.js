@@ -322,7 +322,9 @@ const SDK = {
         },
 
         encrypt: (encrypt) => {
+
             if (encrypt !== undefined && encrypt.length !== 0) {
+
                 const fields = ['J', 'M', 'F'];
                 let encrypted = '';
                 for (let i = 0; i < encrypt.length; i++) {

@@ -77,18 +77,21 @@ $(document).ready(() => {
                 const idEvent = $(this).data("event-id-delete");
                 const event = events.find((event) => event.idEvent === idEvent);
 
-                SDK.Event.deleteEvent(idEvent, event.eventName, event.location, event.price, event.eventDate, event.description, (err, data) => {
-                    if (err && err.xhr.status === 401) {
-                        $(".form-group").addClass("has-error")
-                    }
-                    else if (err) {
-                        console.log("An error happened")
-                        window.alert("There was en error deleting  the event");
-                    } else {
-                        window.location.href = "profile.html";
-                    }
-                })
-
+                if(confirm("Are you sure you want to delete?")){
+                    SDK.Event.deleteEvent(idEvent, event.eventName, event.location, event.price, event.eventDate, event.description, (err, data) => {
+                        if (err && err.xhr.status === 401) {
+                            $(".form-group").addClass("has-error")
+                        }
+                        else if (err) {
+                            console.log("An error happened")
+                            window.alert("There was en error deleting  the event");
+                        } else {
+                            window.location.href = "profile.html";
+                        }
+                    })
+                } else {
+                    alert("Your event was not deleted");
+                }
 
             });
 
