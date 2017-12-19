@@ -10,6 +10,8 @@ const SDK = {
           });
         }*/
 
+        // creates let token so it can be sent as header in the request
+        // i do this as most endpoints requires the token under the HeaderParam "Authorization"
         let token = {
             "Authorization": localStorage.getItem("token")
         };
@@ -17,12 +19,17 @@ const SDK = {
         $.ajax({
             url: SDK.serverURL + options.url,
             method: options.method,
+            // adds the token for the user who is currently logged in
             headers: token,
             contentType: "application/json",
             dataType: "json",
-            data: JSON.stringify(options.data),
+            //data: JSON.stringify(options.data),
+            // encrypts data before sending it
+            data: JSON.stringify(SDK.Encryption.encrypt(JSON.stringify(options.data))),
             success: (data, status, xhr) => {
-                cb(null, data, status, xhr);
+            //    cb(null, data, status, xhr);
+                // decrypts the data comming from the server
+                cb(null, SDK.Encryption.decrypt(data), status, xhr);
             },
             error: (xhr, status, errorThrown) => {
                 cb({xhr: xhr, status: status, error: errorThrown});
@@ -30,6 +37,7 @@ const SDK = {
         });
 
     },
+
     Event: {
         findAll: (cb, events) => {
             SDK.request({
@@ -157,7 +165,7 @@ const SDK = {
         },
         current: (cb) => {
 
-            // request til /api/profile i StudentEndpoint får at vi data om student fra token
+            // request to /api/profile in StudentEndpoint where token is send as part of the headers
             SDK.request({
                 url: "/students/profile",
                 method: "GET"
@@ -200,7 +208,7 @@ const SDK = {
                 //On login-error
                 if (err) return cb(err);
 
-                localStorage.setItem("token", data);
+                localStorage.setItem("token", JSON.parse(data));
 
 
                 cb(null, data);
@@ -229,6 +237,8 @@ const SDK = {
             });
         },
 
+        // Navbar method from Jespers 'javascript-client'
+        // Shows login if there is no currentUser, and logout and profile if there is
         loadNav: (cb) => {
             $("#nav-container").load("nav.html", () => {
                 var currentUser = null;
@@ -262,6 +272,9 @@ const SDK = {
             });
         }
     },
+
+
+
     Storage: {
         prefix: "",
         persist: (key, value) => {
@@ -279,5 +292,61 @@ const SDK = {
         remove: (key) => {
             window.localStorage.removeItem(SDK.Storage.prefix + key);
         }
+    },
+
+    Encryption: {
+
+        // XOR encryption method from https://github.com/KyleBanks/XOREncryption/blob/master/JavaScript/XOREncryption.js
+        // Key has to match with server key
+        encryptDecrypt(input) {
+
+            // checks if there is anything before encrypting/decrypting
+            if(input != undefined){
+
+                var key = ['J', 'M', 'F']; //Can be any chars, and any size array
+                var output = [];
+
+                for (var i = 0; i < input.length; i++) {
+                    var charCode = input.charCodeAt(i) ^ key[i % key.length].charCodeAt(0);
+                    output.push(String.fromCharCode(charCode));
+                }
+
+                return output.join("");
+
+            } else {
+
+                return input;
+            }
+
+
+        },
+
+        encrypt: (encrypt) => {
+
+            if (encrypt !== undefined && encrypt.length !== 0) {
+
+                const fields = ['J', 'M', 'F'];
+                let encrypted = '';
+                for (let i = 0; i < encrypt.length; i++) {
+                    encrypted += (String.fromCharCode((encrypt.charAt(i)).charCodeAt(0) ^ (fields[i % fields.length]).charCodeAt(0)))
+                }
+                return encrypted;
+            } else {
+                return encrypt;
+            }
+        },
+        decrypt: (decrypt) => {
+            if (decrypt.length > 0 && decrypt !== undefined) {
+                const fields = ['J', 'M', 'F'];
+                let decrypted = '';
+                for (let i = 0; i < decrypt.length; i++) {
+                    decrypted += (String.fromCharCode((decrypt.charAt(i)).charCodeAt(0) ^ (fields[i % fields.length]).charCodeAt(0)))
+                }
+                return decrypted;
+            } else {
+                return decrypt;
+            }
+        }
+
     }
 };
