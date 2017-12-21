@@ -10,7 +10,7 @@ $(document).ready(() => {
 
         var currentStudent = JSON.parse(res);
 
-
+        // Puts data into the information box about the user
         $(".profile-info").html(`
           <dl>        
             <dt>Name</dt>
@@ -22,6 +22,7 @@ $(document).ready(() => {
           </dl>
      `);
 
+        // Finds all events where the currently logged in student is the owner
         SDK.Event.findAll((cb, events) => {
             events = JSON.parse(events);
             events.forEach((event) => {
@@ -60,7 +61,6 @@ $(document).ready(() => {
                             $(".form-group").addClass("has-error")
                         }
                         else if (err) {
-                            console.log("An error happened")
                             window.alert("There was en error editing the event");
                         } else {
                             window.location.href = "profile.html";
@@ -83,7 +83,6 @@ $(document).ready(() => {
                             $(".form-group").addClass("has-error")
                         }
                         else if (err) {
-                            console.log("An error happened")
                             window.alert("There was en error deleting  the event");
                         } else {
                             window.location.href = "profile.html";
@@ -97,6 +96,7 @@ $(document).ready(() => {
 
         });
 
+        // gets the events the currently logged in student has joined
         SDK.User.getAttendingEvents((cb, events) => {
             events = JSON.parse(events);
             events.forEach((event) => {

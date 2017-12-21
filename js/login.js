@@ -12,7 +12,6 @@ $(document).ready(() => {
                 $(".form-group").addClass("has-error");
             }
             else if (err) {
-                console.log(err);
                 window.alert("Login failed");
             } else {
                 window.location.href = "index.html";
@@ -32,7 +31,6 @@ $(document).ready(() => {
         SDK.User.createUser(firstName, lastName, email, password, verifyPassword, (err, data) => {
             if (err && err.xhr.status !== 200) {
                 $(".form-group").addClass("has-error");
-                console.log("FEIL")
                 window.alert("There was en error creating user");
             } else {
                 window.location.href = "index.html";

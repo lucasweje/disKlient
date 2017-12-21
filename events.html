@@ -6,47 +6,10 @@
     <link rel="stylesheet" href="css/main.css">
 
     <meta charset="UTF-8">
-    <title>Events - DØK Social 2017</title>
+    <title>DØK Social</title>
 
 </head>
 <body>
-
-
-<div class="modal fade" id="attend-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x
-                </span>
-            </button>
-            <h4 class="modal-title" id="myModalLabel">Your events</h4>
-        </div>
-        <div class="modal-body">
-            <table class="tabel">
-                <thead>
-                <tr>
-                    <th>Owner</th>
-                    <th>Event name</th>
-                    <th>Location</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                </tr>
-                </thead>
-                <tbody id="modal-tbody">
-
-                </tbody>
-            </table>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <a href="profile.html">
-                <button type="button" class="btn btn-success">Proceed to attending events</button>
-            </a>
-        </div>
-    </div>
-</div>
-
-
-
 
 <div class="container-fluid">
 
@@ -63,7 +26,8 @@
         </div>
     </div>
 
-    <!-- Modal popup for create event-->
+    <!-- Taken from https://www.w3schools.com/bootstrap/bootstrap_modal.asp -->
+    <!-- Modal popup for seeing attending students -->
     <div id="attendingStudentsModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -84,27 +48,19 @@
         </div>
     </div>
 
-
 </div>
 
 
+<footer class="panel-footer">
+    <div class="container">
+        <p class="text-muted">2017 © All rights reserved - Weje Inc.</p>
+    </div>
+</footer>
 
-
-
-
-
-
-
-    <footer class="panel-footer">
-        <div class="container">
-            <p class="text-muted">2017 © All rights reserved - Weje Inc.</p>
-        </div>
-    </footer>
-
-    <script src="lib/js/jquery-3.2.1.js"></script>
-    <script src="lib/js/bootstrap.js"></script>
-    <script src="js/sdk.js"></script>
-    <script src="js/events.js"></script>
+<script src="lib/js/jquery-3.2.1.js"></script>
+<script src="lib/js/bootstrap.js"></script>
+<script src="js/sdk.js"></script>
+<script src="js/events.js"></script>
 
 </body>
 </html>
