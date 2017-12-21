@@ -7,26 +7,7 @@ dd {
     margin-bottom: 10px;
 }
 
-.book-container .panel-body {
-    min-height: 242px;
-}
-.book-container img {
-    height: 120px;
-}
-.book-container .price-label {
-    font-size: 1.4em;
-    font-weight: bold;
-}
-
-.book-container .price-label p {
-    margin: 4px 0 0 0;
-}
-
 body{
- /*   background: url(https://static.pexels.com/photos/196652/pexels-photo-196652.jpeg) no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-*/
     background: url(https://static.pexels.com/photos/196652/pexels-photo-196652.jpeg) no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -45,9 +26,6 @@ body{
     left: 0;
 }
 
-.description{
-    font-size: 150%;
-}
 
 .highlight-clean{
     background: rgb(255, 255, 255);
@@ -63,33 +41,5 @@ body{
 
 .headline{
     color: ghostwhite;
-
     font-size: 50px;
-
-    /*
-    text-shadow: 1px 1px 0 #000,
-    -1px 1px 0 #000,
-    1px -1px 0 #000,
-    -1px -1px 0 #000,
-    0px 1px 0 #000,
-    0px -1px 0 #000,
-    -1px 0px 0 #000,
-    1px 0px 0 #000,
-    2px 2px 0 #000,
-    -2px 2px 0 #000,
-    2px -2px 0 #000,
-    -2px -2px 0 #000,
-    0px 2px 0 #000,
-    0px -2px 0 #000,
-    -2px 0px 0 #000,
-    2px 0px 0 #000,
-    1px 2px 0 #000,
-    -1px 2px 0 #000,
-    1px -2px 0 #000,
-    -1px -2px 0 #000,
-    2px 1px 0 #000,
-    -2px 1px 0 #000,
-    2px -1px 0 #000,
-    -2px -1px 0 #000;
-    */
 }

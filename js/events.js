@@ -4,9 +4,9 @@ $(document).ready(() => {
     const $eventList = $("#event-list");
     const $seeAttendingStudents = $("#seeAttendingStudents");
 
-
     SDK.Event.findAll((cb, events) => {
-        //If statement checks if there is a token (a log in has been succesful)
+
+        //If statement checks if there is a token (a log in has been successful)
         //Displays events if yes
         if (localStorage.getItem("token")) {
             events = JSON.parse(events);
@@ -33,7 +33,6 @@ $(document).ready(() => {
 
                 $eventList.append(eventHtml)
 
-
             });
         }
         else {
@@ -55,34 +54,31 @@ $(document).ready(() => {
             // finds the event with the matching idEvent
             const event = events.find((event) => event.idEvent === idEvent);
 
-            //
+
             SDK.Event.joinEvent(idEvent, event.eventName, event.location, event.price, event.eventDate, event.description, (err, data) => {
                 if (err && err.xhr.status === 401) {
                     $(".form-group").addClass("has-error")
                 }
                 else if (err) {
-                    console.log("An error happened")
                     window.alert("There was en error joining the event");
                 } else {
                     window.location.href = "events.html";
+                    window.alert("Event joined!");
                 }
             });
 
 
         });
 
-        //Måske ryk ud af findAll metoden
+
         $(".seeAttendingStudents").click(function () {
 
             var idEvent = $(this).data("event-id-see");
-
-            console.log(idEvent);
 
             SDK.Event.getAttendingStudents(idEvent, (cb, students) => {
                 if (students) {
                     students = JSON.parse(students);
                     students.forEach((student) => {
-                        console.log(student.firstName);
 
                         const attendingStudentsHtml = `           
                                                           
@@ -104,25 +100,9 @@ $(document).ready(() => {
 
     });
 
+    // clear the modal after having seen who is participating
     $("#clearModalText").click(function () {
         $("#seeAttendingStudents").html("");
     });
 
-
-    // Maybe not needed
-    $("#attend-modal").on("shown.es.modal", () => {
-        const mineEvents = SDK.Storage.load("mineEvents");
-        const $modalTbody = $("#modal-tvody");
-        mineEvents.forEach((entry) => {
-            $modalTbody.append(`
-      <tr>
-      <td>${entry.event.eventName}</td>
-      <td>${entry.count}</td>
-      <td>kr. ${entry.event.price}</td>
-      <td>kr. 0</td>
-      </tr>
-      
-      `)
-        });
-    });
 });
