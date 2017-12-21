@@ -248,28 +248,6 @@ const SDK = {
 
         // XOR encryption method from https://github.com/KyleBanks/XOREncryption/blob/master/JavaScript/XOREncryption.js
         // Key has to match with server key
-        encryptDecrypt(input) {
-
-            // checks if there is anything before encrypting/decrypting
-            if(input != undefined){
-
-                var key = ['J', 'M', 'F']; //Can be any chars, and any size array
-                var output = [];
-
-                for (var i = 0; i < input.length; i++) {
-                    var charCode = input.charCodeAt(i) ^ key[i % key.length].charCodeAt(0);
-                    output.push(String.fromCharCode(charCode));
-                }
-
-                return output.join("");
-
-            } else {
-
-                return input;
-            }
-
-
-        },
 
         encrypt: (encrypt) => {
 
